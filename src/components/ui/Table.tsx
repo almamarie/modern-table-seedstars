@@ -50,6 +50,7 @@ import {
 
 import { CSS } from "@dnd-kit/utilities";
 import { TableHeadProps } from "../../types";
+import { cn } from "../../lib/utils";
 
 const fetchSize = 100;
 
