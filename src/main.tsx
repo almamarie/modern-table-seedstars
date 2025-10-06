@@ -14,7 +14,7 @@ import { QueryClient, QueryClientProvider } from "@tanstack/react-query";
 import VirtualizedModernTable from "./pages/VirtualizedModernTable";
 import ModernTable from "./pages/ModernTable";
 import Navigation from "./components/Navigation";
-import RefactorTable from "./pages/RefactorTable";
+
 
 function App() {
   return (
@@ -34,7 +34,6 @@ function App() {
               element={<VirtualizedModernTable />}
             />
             <Route path="/modern-table" element={<ModernTable />} />
-            <Route path="/refactor-table" element={<RefactorTable />} />
           </Routes>
         </div>
       </div>

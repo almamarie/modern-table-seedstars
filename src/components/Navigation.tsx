@@ -28,16 +28,6 @@ export default function Navigation() {
           >
             Modern Table
           </Link>
-          <Link
-            to="/refactor-table"
-            className={`px-4 py-2 rounded transition-colors ${
-              location.pathname === "/refactor-table"
-                ? "bg-blue-600 text-white"
-                : "bg-gray-600 hover:bg-gray-700 text-gray-200"
-            }`}
-          >
-            Refactor Table
-          </Link>
         </div>
       </div>
     </nav>
