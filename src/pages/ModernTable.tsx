@@ -13,25 +13,28 @@ import ApplicationStatus from "../components/ApplicationStatus";
 import { STATUS } from "../enum";
 import MobileMessage from "../components/MobileMessage";
 
-const fetchSize = 100;
+const fetchSize = 200;
 
 export default function ModernTable() {
   const { isMobile, isTablet } = useResponsive();
   const [rowSelection, setRowSelection] = useState({});
   const [sorting, setSorting] = useState<SortingState>([]);
+  const [bulkActionMessage, setBulkActionMessage] = useState("");
 
   // Bulk action functions
   const handleBulkAccept = () => {
     const selectedRows = Object.keys(rowSelection);
     console.log("Accepting rows:", selectedRows);
-    // Add your bulk accept logic here
+    // Change to api
+    setBulkActionMessage(`${selectedRows.length} Applications accepted`);
     setRowSelection({});
   };
 
   const handleBulkDecline = () => {
     const selectedRows = Object.keys(rowSelection);
     console.log("Declining rows:", selectedRows);
-
+    // Change to api
+    setBulkActionMessage(`${selectedRows.length} Applications declined`);
     setRowSelection({});
   };
 
@@ -127,6 +130,7 @@ export default function ModernTable() {
           </div>
         ),
         enableSorting: true,
+        disableDrag: true,
         // size: 100,
       },
       {
@@ -147,7 +151,7 @@ export default function ModernTable() {
     ],
     queryFn: async ({ pageParam = 0 }) => {
       const start = (pageParam as number) * fetchSize;
-      const fetchedData = await fetchData(start, fetchSize, sorting); //pretend api call
+      const fetchedData = await fetchData(start, fetchSize, sorting);
       return fetchedData;
     },
     initialPageParam: 0,
@@ -225,6 +229,7 @@ export default function ModernTable() {
           isLoading={isLoading}
           isTablet={isTablet}
         />
+        <span>{bulkActionMessage}</span>
       </div>
     </div>
   );

@@ -68,14 +68,16 @@ const DraggableTableHeader = <T,>({ header }: { header: Header<T, unknown> }) =>
             ? null
             : flexRender(header.column.columnDef.header, header.getContext())}
         </div>
-        <div
-          {...attributes}
-          {...listeners}
-          className="ml-2 cursor-grab p-1 hover:bg-gray-100 rounded"
-          title="Drag to reorder column"
-        >
-          🟰
-        </div>
+        {!(header.column.columnDef as any).disableDrag && (
+          <div
+            {...attributes}
+            {...listeners}
+            className="hover:bg-gray-100 ml-2 p-1 rounded cursor-grab"
+            title="Drag to reorder column"
+          >
+            🟰
+          </div>
+        )}
       </div>
     </TableHead>
   );
@@ -374,9 +376,9 @@ function DataTable<TData>({
 
       <div className="h-2" />
       <div className={`${isTablet ? 'flex-col space-y-2' : 'flex items-center gap-2'} overflow-x-auto`}>
-        <div className="flex items-center gap-2 flex-shrink-0">
+        <div className="flex flex-shrink-0 items-center gap-2">
           <button
-            className="p-2 border rounded hover:bg-gray-50 disabled:opacity-50"
+            className="hover:bg-gray-50 disabled:opacity-50 p-2 border rounded"
             onClick={() => table.setPageIndex(0)}
             disabled={!table.getCanPreviousPage()}
             title="First page"
@@ -384,7 +386,7 @@ function DataTable<TData>({
             {"<<"}
           </button>
           <button
-            className="p-2 border rounded hover:bg-gray-50 disabled:opacity-50"
+            className="hover:bg-gray-50 disabled:opacity-50 p-2 border rounded"
             onClick={() => table.previousPage()}
             disabled={!table.getCanPreviousPage()}
             title="Previous page"
@@ -392,7 +394,7 @@ function DataTable<TData>({
             {"<"}
           </button>
           <button
-            className="p-2 border rounded hover:bg-gray-50 disabled:opacity-50"
+            className="hover:bg-gray-50 disabled:opacity-50 p-2 border rounded"
             onClick={() => table.nextPage()}
             disabled={!table.getCanNextPage()}
             title="Next page"
@@ -400,7 +402,7 @@ function DataTable<TData>({
             {">"}
           </button>
           <button
-            className="p-2 border rounded hover:bg-gray-50 disabled:opacity-50"
+            className="hover:bg-gray-50 disabled:opacity-50 p-2 border rounded"
             onClick={() => table.setPageIndex(table.getPageCount() - 1)}
             disabled={!table.getCanNextPage()}
             title="Last page"
@@ -409,7 +411,7 @@ function DataTable<TData>({
           </button>
         </div>
 
-        <div className="flex items-center gap-2 flex-wrap">
+        <div className="flex flex-wrap items-center gap-2">
           <span className="flex items-center gap-1 text-sm">
             <div>Page</div>
             <strong>
@@ -456,7 +458,7 @@ function DataTable<TData>({
         </div>
       </div>
 
-      <div className="mt-4 text-sm text-gray-600">
+      <div className="mt-4 text-gray-600 text-sm">
         {Object.keys(rowSelection).length} of{" "}
         {table.getPreFilteredRowModel().rows.length} Total Rows Selected
       </div>
