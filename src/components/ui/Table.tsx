@@ -1,9 +1,17 @@
 import React, { CSSProperties, forwardRef, HTMLProps, useEffect } from "react";
 import {
   Cell,
+  ColumnDef,
   Header,
   flexRender,
   Table as TanStackTable,
+  useReactTable,
+  getCoreRowModel,
+  getSortedRowModel,
+  getFilteredRowModel,
+  getPaginationRowModel,
+  SortingState,
+  OnChangeFn,
 } from "@tanstack/react-table";
 import {
   DndContext,
@@ -186,19 +194,14 @@ TableCell.displayName = "TableCell";
 
 const Table = forwardRef<HTMLTableElement, TableProps>(
   ({ children, className, ...props }, ref) => (
-    <div
-      data-slot="table-container"
-      className={(cn("table relative w-fit max-h-10 overflow-auto overflow-auto border-collapse table-fixed", className))}
+    <table
+      ref={ref}
+      data-slot="table"
+      className={cn("w-full border-collapse table-fixed", className)}
+      {...props}
     >
-      <table
-        ref={ref}
-                data-slot="table"
-        className={cn("w-full border-collapse table-fixed", className)}
-        {...props}
-      >
-        {children}
-      </table>
-    </div>
+      {children}
+    </table>
   )
 );
 Table.displayName = "Table";
@@ -227,18 +230,71 @@ function IndeterminateCheckbox({
 }
 
 interface DataTableProps<TData> {
-  table: TanStackTable<TData>;
+  data: TData[];
+  columns: ColumnDef<TData>[];
+  rowSelection: {};
+  setRowSelection: React.Dispatch<React.SetStateAction<{}>>;
+  sorting: SortingState;
+  setSorting: React.Dispatch<React.SetStateAction<SortingState>>;
   columnOrder: string[];
-  onColumnOrderChange: (columnOrder: string[]) => void;
+  setColumnOrder: (columnOrder: string[]) => void;
+  isLoading: boolean;
+  isTablet?: boolean;
   className?: string;
 }
 
 function DataTable<TData>({
-  table,
+  data,
+  columns,
+  rowSelection,
+  setRowSelection,
+  sorting,
+  setSorting,
   columnOrder,
-  onColumnOrderChange,
+  setColumnOrder,
+  isLoading,
+  isTablet = false,
   className,
 }: DataTableProps<TData>) {
+  const table = useReactTable({
+    data,
+    columns,
+    state: {
+      columnOrder,
+      rowSelection,
+      sorting,
+    },
+    enableRowSelection: true,
+    enableSorting: true,
+    onRowSelectionChange: setRowSelection,
+    onColumnOrderChange: (updater) => {
+      if (typeof updater === 'function') {
+        setColumnOrder(updater(columnOrder));
+      } else {
+        setColumnOrder(updater);
+      }
+    },
+    onSortingChange: setSorting,
+    getCoreRowModel: getCoreRowModel(),
+    getSortedRowModel: getSortedRowModel(),
+    getFilteredRowModel: getFilteredRowModel(),
+    getPaginationRowModel: getPaginationRowModel(),
+    manualSorting: true,
+    debugTable: true,
+    debugHeaders: true,
+    debugColumns: true,
+  });
+
+  const handleSortingChange: OnChangeFn<SortingState> = (updater) => {
+    setSorting(updater);
+    table.setPageIndex(0);
+  };
+
+  table.setOptions((prev) => ({
+    ...prev,
+    onSortingChange: handleSortingChange,
+  }));
+
   const sensors = useSensors(
     useSensor(MouseSensor, {}),
     useSensor(TouchSensor, {}),
@@ -248,7 +304,7 @@ function DataTable<TData>({
   function handleDragEnd(event: DragEndEvent) {
     const { active, over } = event;
     if (active && over && active.id !== over.id) {
-      onColumnOrderChange(
+      setColumnOrder(
         arrayMove(
           columnOrder,
           columnOrder.indexOf(active.id as string),
@@ -258,44 +314,157 @@ function DataTable<TData>({
     }
   }
 
+  const containerWidth = isTablet ? 'calc(100vw - 2rem)' : 'calc(100vw - 4rem)';
+  const minTableWidth = isTablet ? '800px' : '1000px';
+
   return (
-    <DndContext
-      collisionDetection={closestCenter}
-      modifiers={[restrictToHorizontalAxis]}
-      onDragEnd={handleDragEnd}
-      sensors={sensors}
-    >
-      <Table className={className}>
-        <TableHeader>
-                  {table.getHeaderGroups().map((headerGroup) => {
-                     return <TableRow key={headerGroup.id}>
-                          <SortableContext
-                              items={columnOrder}
-                              strategy={horizontalListSortingStrategy}
-                          >
-                              {headerGroup.headers.map((header) => (
-                                  <DraggableTableHeader key={header.id} header={header} />
-                              ))}
-                          </SortableContext>
-                      </TableRow>
-                  })}
-        </TableHeader>
-        <TableBody>
-          {table.getRowModel().rows.map((row) => (
-            <TableRow key={row.id}>
-              <SortableContext
-                items={columnOrder}
-                strategy={horizontalListSortingStrategy}
-              >
-                {row.getVisibleCells().map((cell) => (
-                  <DragAlongCell key={cell.id} cell={cell} />
+    <div className="w-full">
+      <DndContext
+        collisionDetection={closestCenter}
+        modifiers={[restrictToHorizontalAxis]}
+        onDragEnd={handleDragEnd}
+        sensors={sensors}
+      >
+        <div
+          className="relative border border-gray-300 rounded-lg"
+          style={{
+            width: containerWidth,
+            height: "600px",
+            overflow: "auto",
+            minWidth: minTableWidth,
+          }}
+        >
+          <div
+            className="min-w-full"
+            style={{
+              minWidth: minTableWidth,
+            }}
+          >
+            <Table className={cn("w-full", className)}>
+              <TableHeader>
+                {table.getHeaderGroups().map((headerGroup) => {
+                  return (
+                    <TableRow key={headerGroup.id}>
+                      <SortableContext
+                        items={columnOrder}
+                        strategy={horizontalListSortingStrategy}
+                      >
+                        {headerGroup.headers.map((header) => (
+                          <DraggableTableHeader key={header.id} header={header} />
+                        ))}
+                      </SortableContext>
+                    </TableRow>
+                  );
+                })}
+              </TableHeader>
+              <TableBody>
+                {table.getPaginationRowModel().rows.map((row) => (
+                  <TableRow key={row.id}>
+                    <SortableContext
+                      items={columnOrder}
+                      strategy={horizontalListSortingStrategy}
+                    >
+                      {row.getVisibleCells().map((cell) => (
+                        <DragAlongCell key={cell.id} cell={cell} />
+                      ))}
+                    </SortableContext>
+                  </TableRow>
                 ))}
-              </SortableContext>
-            </TableRow>
-          ))}
-        </TableBody>
-      </Table>
-    </DndContext>
+              </TableBody>
+            </Table>
+          </div>
+        </div>
+      </DndContext>
+
+      <div className="h-2" />
+      <div className={`${isTablet ? 'flex-col space-y-2' : 'flex items-center gap-2'} overflow-x-auto`}>
+        <div className="flex items-center gap-2 flex-shrink-0">
+          <button
+            className="p-2 border rounded hover:bg-gray-50 disabled:opacity-50"
+            onClick={() => table.setPageIndex(0)}
+            disabled={!table.getCanPreviousPage()}
+            title="First page"
+          >
+            {"<<"}
+          </button>
+          <button
+            className="p-2 border rounded hover:bg-gray-50 disabled:opacity-50"
+            onClick={() => table.previousPage()}
+            disabled={!table.getCanPreviousPage()}
+            title="Previous page"
+          >
+            {"<"}
+          </button>
+          <button
+            className="p-2 border rounded hover:bg-gray-50 disabled:opacity-50"
+            onClick={() => table.nextPage()}
+            disabled={!table.getCanNextPage()}
+            title="Next page"
+          >
+            {">"}
+          </button>
+          <button
+            className="p-2 border rounded hover:bg-gray-50 disabled:opacity-50"
+            onClick={() => table.setPageIndex(table.getPageCount() - 1)}
+            disabled={!table.getCanNextPage()}
+            title="Last page"
+          >
+            {">>"}
+          </button>
+        </div>
+
+        <div className="flex items-center gap-2 flex-wrap">
+          <span className="flex items-center gap-1 text-sm">
+            <div>Page</div>
+            <strong>
+              {table.getState().pagination.pageIndex + 1} of{" "}
+              {table.getPageCount()}
+            </strong>
+          </span>
+
+          <span className="flex items-center gap-1 text-sm">
+            | Go to page:
+            <input
+              type="number"
+              min="1"
+              max={table.getPageCount()}
+              defaultValue={table.getState().pagination.pageIndex + 1}
+              onChange={(e) => {
+                const page = e.target.value ? Number(e.target.value) - 1 : 0;
+                table.setPageIndex(page);
+              }}
+              className="p-1 border rounded w-16 text-center"
+            />
+          </span>
+
+          <select
+            value={table.getState().pagination.pageSize}
+            onChange={(e) => {
+              const value = e.target.value;
+              if (value === "all") {
+                table.setPageSize(table.getPreFilteredRowModel().rows.length);
+              } else {
+                table.setPageSize(Number(value));
+              }
+              table.setPageIndex(0);
+            }}
+            className="p-1 border rounded text-sm"
+          >
+            {[10, 20, 30, 40, 50, 100].map((pageSize) => (
+              <option key={pageSize} value={pageSize}>
+                Show {pageSize}
+              </option>
+            ))}
+            <option value="all">Show All</option>
+          </select>
+        </div>
+      </div>
+
+      <div className="mt-4 text-sm text-gray-600">
+        {Object.keys(rowSelection).length} of{" "}
+        {table.getPreFilteredRowModel().rows.length} Total Rows Selected
+      </div>
+    </div>
   );
 }
 
