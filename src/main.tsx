@@ -23,7 +23,7 @@ function App() {
         <div>
           <Navigation />
         </div>
-        <div className="mx-auto px-4 container">
+        <div className="mx-auto px-4">
           <Routes>
             <Route
               path="/"

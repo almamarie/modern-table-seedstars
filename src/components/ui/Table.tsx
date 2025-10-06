@@ -56,9 +56,11 @@ const DraggableTableHeader = <T,>({ header }: { header: Header<T, unknown> }) =>
         }}
       >
         <div
+          {...attributes}
+          {...listeners}
           {...{
             className: header.column.getCanSort()
-              ? "cursor-pointer select-none"
+              ? "cursor-grab select-none"
               : "",
             onClick: header.column.getToggleSortingHandler(),
           }}
@@ -72,13 +74,7 @@ const DraggableTableHeader = <T,>({ header }: { header: Header<T, unknown> }) =>
             desc: " 🔽",
           }[header.column.getIsSorted() as string] ?? null}
         </div>
-        <button
-          {...attributes}
-          {...listeners}
-          className="ml-2 cursor-grab"
-        >
-          🟰
-        </button>
+        {/* <button className="ml-2 cursor-grab">🟰</button> */}
       </div>
     </TableHead>
   );
@@ -134,7 +130,7 @@ const TableRow = React.forwardRef<
     ref={ref}
     {...props}
     className={cn(
-      "data-[state=selected]:bg-muted hover:bg-muted/50 p-20 [&_td]:border-0 [&_th]:border-0 border-b transition-colors",
+      "group data-[state=selected]:bg-muted hover:bg-muted/50 p-20 px-2 [&_td]:border-0 [&_th]:border-0 border-b transition-colors",
       className
     )}
   />
@@ -149,7 +145,7 @@ TableRow.displayName = "TableRow";
        data-slot="table-head"
        {...props}
        className={cn(
-         "h-10 px-2 text-left align-middle font-medium text-muted-foreground border-0 [&:has([role=checkbox])]:pr-0 [&>[role=checkbox]]:translate-y-[2px]",
+         "h-10 text-left align-middle font-medium text-muted-foreground border-0 [&:has([role=checkbox])]:pr-0 [&>[role=checkbox]]:translate-y-[2px]",
          className
        )}
      >

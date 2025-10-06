@@ -75,6 +75,7 @@ const VirtualizedDraggableTableHeader = ({
           justifyContent: "space-between",
           width: "100%",
         }}
+        {...(!disableDrag ? { ...attributes, ...listeners } : {})}
       >
         <div
           {...{
@@ -93,15 +94,6 @@ const VirtualizedDraggableTableHeader = ({
             desc: " 🔽",
           }[header.column.getIsSorted() as string] ?? null}
         </div>
-        {!disableDrag && (
-          <button
-            {...attributes}
-            {...listeners}
-            style={{ marginLeft: "8px", cursor: "grab" }}
-          >
-            🟰
-          </button>
-        )}
       </div>
     </TableHead>
   );
@@ -265,64 +257,100 @@ export function VirtualizedTable<TData>({
       onDragEnd={handleDragEnd}
       sensors={sensors}
     >
-      <div className="p-2">
-        <div className="flex flex-col">
-          <Table className="table w-full border-collapse table-fixed">
-            <TableHeader>
-              {table.getHeaderGroups().map((headerGroup) => (
-                <TableRow key={headerGroup.id}>
-                  <SortableContext
-                    items={columnOrder}
-                    strategy={horizontalListSortingStrategy}
-                  >
-                    {headerGroup.headers.map((header) => (
-                      <VirtualizedDraggableTableHeader
-                        key={header.id}
-                        header={header}
-                      />
-                    ))}
-                  </SortableContext>
-                </TableRow>
-              ))}
-            </TableHeader>
-          </Table>
-
-          <div
-            ref={tableContainerRef}
-            className="overflow-y-auto"
-            style={{ height: containerHeight }}
-          >
-            <Table className="table w-full border-collapse table-fixed">
-              <TableBody>
-                {rowVirtualizer.getVirtualItems().map((virtualRow) => {
-                  const row = paginatedRows[virtualRow.index];
-                  return (
-                    <TableRow
-                      key={row.id}
-                      data-index={virtualRow.index}
-                      ref={(node) => rowVirtualizer.measureElement(node)}
-                    >
-                      {row.getVisibleCells().map((cell) => (
-                        <SortableContext
-                          key={cell.id}
-                          items={columnOrder}
-                          strategy={horizontalListSortingStrategy}
-                        >
-                          <VirtualizedDragAlongCell key={cell.id} cell={cell} />
-                        </SortableContext>
-                      ))}
-                    </TableRow>
-                  );
-                })}
-              </TableBody>
-            </Table>
-          </div>
+      <div className="w-full">
+        {/* Message for mobile users */}
+        <div className="md:hidden block p-6 text-gray-600 text-center">
+          This table can only be viewed on tablet or desktop devices.
         </div>
 
-        <TableFooter table={table} />
-        <div>
-          {Object.keys(rowSelection).length} of{" "}
-          {table.getPreFilteredRowModel().rows.length} Total Rows Selected
+        {/* Table visible on md+ screens */}
+        <div className="hidden md:flex flex-col w-full">
+          {/* Shared scroll container for horizontal scroll sync */}
+          <div className="overflow-x-auto">
+            {/* Fixed header */}
+            <div className="min-w-full">
+              <Table className="w-full border-collapse table-fixed">
+                <TableHeader>
+                  {table.getHeaderGroups().map((headerGroup) => (
+                    <TableRow key={headerGroup.id}>
+                      <SortableContext
+                        items={columnOrder}
+                        strategy={horizontalListSortingStrategy}
+                      >
+                        {headerGroup.headers.map((header) => (
+                          <VirtualizedDraggableTableHeader
+                            key={header.id}
+                            header={header}
+                          />
+                        ))}
+                      </SortableContext>
+                    </TableRow>
+                  ))}
+                </TableHeader>
+              </Table>
+            </div>
+
+            {/* Scrollable body (vertical only, but synced horizontally) */}
+            <div
+              ref={tableContainerRef}
+              className="overflow-y-auto"
+              style={{ height: containerHeight }}
+            >
+              <div className="min-w-full">
+                <Table className="w-full border-collapse table-fixed">
+                  <TableBody>
+                    {rowVirtualizer.getVirtualItems().map((virtualRow) => {
+                      const row = paginatedRows[virtualRow.index];
+                      return (
+                        <TableRow
+                          key={row.id}
+                          data-index={virtualRow.index}
+                          data-state={
+                            row.getIsSelected() ? "selected" : undefined
+                          }
+                          style={{
+                            backgroundColor: row.getIsSelected()
+                              ? "hsl(220 14.3% 95.9%)"
+                              : undefined,
+                          }}
+                          onMouseEnter={(e) => {
+                            if (!row.getIsSelected())
+                              e.currentTarget.style.backgroundColor =
+                                "hsl(220 14.3% 95.9% / 0.5)";
+                          }}
+                          onMouseLeave={(e) => {
+                            if (!row.getIsSelected())
+                              e.currentTarget.style.backgroundColor = "";
+                          }}
+                          ref={(node) => rowVirtualizer.measureElement(node)}
+                        >
+                          {row.getVisibleCells().map((cell) => (
+                            <SortableContext
+                              key={cell.id}
+                              items={columnOrder}
+                              strategy={horizontalListSortingStrategy}
+                            >
+                              <VirtualizedDragAlongCell
+                                key={cell.id}
+                                cell={cell}
+                              />
+                            </SortableContext>
+                          ))}
+                        </TableRow>
+                      );
+                    })}
+                  </TableBody>
+                </Table>
+              </div>
+            </div>
+          </div>
+
+          <TableFooter table={table} />
+
+          <div className="p-2 text-gray-500 text-sm">
+            {Object.keys(rowSelection).length} of{" "}
+            {table.getPreFilteredRowModel().rows.length} total rows selected
+          </div>
         </div>
       </div>
     </DndContext>
