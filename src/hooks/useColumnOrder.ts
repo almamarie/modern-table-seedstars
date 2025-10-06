@@ -1,6 +1,6 @@
-import { useState, useEffect } from 'react';
+import { useState } from "react";
 
-const COLUMN_ORDER_KEY = 'table-column-order';
+const COLUMN_ORDER_KEY = "table-column-order";
 
 export function usePersistedColumnOrder(defaultOrder: string[]) {
   const [columnOrder, setColumnOrder] = useState<string[]>(() => {
@@ -17,7 +17,7 @@ export function usePersistedColumnOrder(defaultOrder: string[]) {
     try {
       localStorage.setItem(COLUMN_ORDER_KEY, JSON.stringify(newOrder));
     } catch (error) {
-      console.error('Failed to save column order:', error);
+      console.error("Failed to save column order:", error);
     }
   };
 

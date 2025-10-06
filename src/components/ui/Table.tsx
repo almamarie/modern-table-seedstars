@@ -4,7 +4,6 @@ import {
   ColumnDef,
   Header,
   flexRender,
-  Table as TanStackTable,
   useReactTable,
   getCoreRowModel,
   getSortedRowModel,

@@ -263,11 +263,9 @@ export function VirtualizedTable<TData>({
           This table can only be viewed on tablet or desktop devices.
         </div>
 
-        {/* Table visible on md+ screens */}
         <div className="hidden md:flex flex-col w-full">
           {/* Shared scroll container for horizontal scroll sync */}
           <div className="overflow-x-auto">
-            {/* Fixed header */}
             <div className="min-w-full">
               <Table className="w-full border-collapse table-fixed">
                 <TableHeader>
@@ -290,7 +288,6 @@ export function VirtualizedTable<TData>({
               </Table>
             </div>
 
-            {/* Scrollable body (vertical only, but synced horizontally) */}
             <div
               ref={tableContainerRef}
               className="overflow-y-auto"
