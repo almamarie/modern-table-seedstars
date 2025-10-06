@@ -1,10 +1,7 @@
-import React, { useMemo, useState, useCallback, useEffect } from "react";
+import { useMemo, useState } from "react";
 import { ColumnDef, SortingState } from "@tanstack/react-table";
 import { fetchData, Person, PersonApiResponse } from "../makeData";
-import {
-  keepPreviousData,
-  useInfiniteQuery,
-} from "@tanstack/react-query";
+import { keepPreviousData, useInfiniteQuery } from "@tanstack/react-query";
 import { VirtualizedTable } from "../components/ui/virtualisedTable";
 import { IndeterminateCheckbox } from "../components/ui/table";
 
@@ -40,49 +37,45 @@ export default function VirtualizedModernTable() {
           </div>
         ),
         size: 50,
+        disableDrag: true,
       },
       {
         accessorKey: "#",
         cell: (info) => info.row.index,
         id: "index",
         size: 50,
+        disableDrag: true,
       },
       {
         accessorKey: "firstName",
         cell: (info) => info.getValue(),
         id: "firstName",
-        size: 150,
       },
       {
         accessorFn: (row) => row.lastName,
         cell: (info) => info.getValue(),
         header: () => <span>Last Name</span>,
         id: "lastName",
-        size: 150,
       },
       {
         accessorKey: "age",
         header: () => "Age",
         id: "age",
-        size: 120,
       },
       {
         accessorKey: "visits",
         header: () => <span>Visits</span>,
         id: "visits",
-        size: 120,
       },
       {
         accessorKey: "status",
         header: "Status",
         id: "status",
-        size: 150,
       },
       {
         accessorKey: "progress",
         header: "Profile Progress",
         id: "progress",
-        size: 180,
       },
     ],
     []
@@ -112,24 +105,6 @@ export default function VirtualizedModernTable() {
   const totalDBRowCount = data?.pages?.[0]?.meta?.totalRowCount ?? 0;
   const totalFetched = flatData.length;
 
-  //called on scroll and possibly on mount to fetch more data as the user scrolls and reaches bottom of table
-  const fetchMoreOnBottomReached = useCallback(
-    (containerRefElement?: HTMLDivElement | null) => {
-      if (containerRefElement) {
-        const { scrollHeight, scrollTop, clientHeight } = containerRefElement;
-        //once the user has scrolled within 500px of the bottom of the table, fetch more data if we can
-        if (
-          scrollHeight - scrollTop - clientHeight < 500 &&
-          !isFetching &&
-          totalFetched < totalDBRowCount
-        ) {
-          fetchNextPage();
-        }
-      }
-    },
-    [fetchNextPage, isFetching, totalFetched, totalDBRowCount]
-  );
-
   const [columnOrder, setColumnOrder] = useState<string[]>(() =>
     columns.map((c) => c.id!)
   );
@@ -138,9 +113,10 @@ export default function VirtualizedModernTable() {
     return <>Loading...</>;
   }
 
+  console.log("Data size: ", flatData.length);
   return (
     <div>
-      <h1 className="text-2xl font-bold mb-4">Virtualized Modern Table</h1>
+      <h1 className="mb-4 font-bold text-2xl">Virtualized Modern Table</h1>
       <VirtualizedTable
         data={flatData}
         columns={columns}

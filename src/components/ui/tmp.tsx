@@ -1,5 +1,4 @@
 import React, { CSSProperties, HTMLProps, useEffect, useState } from "react";
-import ReactDOM from "react-dom/client";
 
 import "./index.css";
 
@@ -16,14 +15,9 @@ import {
   getSortedRowModel,
   OnChangeFn,
 } from "@tanstack/react-table";
-import { fetchData, makeData, Person, PersonApiResponse } from "./makeData";
+import { fetchData, Person, PersonApiResponse } from "../../makeData";
 
-import {
-  keepPreviousData,
-  QueryClient,
-  QueryClientProvider,
-  useInfiniteQuery,
-} from "@tanstack/react-query";
+import { keepPreviousData, useInfiniteQuery } from "@tanstack/react-query";
 import { useVirtualizer } from "@tanstack/react-virtual";
 import {
   DndContext,

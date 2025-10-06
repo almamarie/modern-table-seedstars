@@ -23,7 +23,7 @@ import {
   useSortable,
 } from "@dnd-kit/sortable";
 import { CSS } from "@dnd-kit/utilities";
-import { TableCellProps, TableHeadProps, TableProps } from "../../types";
+import { TableCellProps, TableHeaderProps, TableHeadProps, TableProps } from "../../types";
 import { cn } from "../../lib/utils";
 
 const DraggableTableHeader = <T,>({ header }: { header: Header<T, unknown> }) => {
@@ -75,7 +75,7 @@ const DraggableTableHeader = <T,>({ header }: { header: Header<T, unknown> }) =>
         <button
           {...attributes}
           {...listeners}
-          style={{ marginLeft: "8px", cursor: "grab" }}
+          className="ml-2 cursor-grab"
         >
           🟰
         </button>
@@ -109,50 +109,95 @@ const DragAlongCell = <T,>({ cell }: { cell: Cell<T, unknown> }) => {
   );
 };
 
-export const TableHead = forwardRef<HTMLTableCellElement, TableHeadProps>(
+const TableHeader = React.forwardRef<HTMLTableSectionElement, TableHeaderProps>(
   ({ children, className, ...props }, ref) => (
-    <th
+    <thead
       ref={ref}
-      data-slot="table-head"
+      data-slot="table-header"
       className={cn(
-        "py-3.5 font-semibold text-left px-2 align-middle whitespace-nowrap [&:has([role=checkbox])]:pr-0 [&>[role=checkbox]]:translate-y-[2px]",
+        "top-0 sticky bg-gray-200 [&_tr]:border-0 border-t border-b",
         className
       )}
       {...props}
     >
       {children}
-    </th>
+    </thead>
   )
 );
+TableHeader.displayName = "TableHeader";
+
+const TableRow = React.forwardRef<
+  HTMLTableRowElement,
+  React.HTMLAttributes<HTMLTableRowElement>
+>(({ className, ...props }, ref) => (
+  <tr
+    ref={ref}
+    {...props}
+    className={cn(
+      "data-[state=selected]:bg-muted hover:bg-muted/50 p-20 [&_td]:border-0 [&_th]:border-0 border-b transition-colors",
+      className
+    )}
+  />
+));
+TableRow.displayName = "TableRow";
+
+
+ const TableHead = forwardRef<HTMLTableCellElement, TableHeadProps>(
+   ({ children, className, ...props }, ref) => (
+     <th
+       ref={ref}
+       data-slot="table-head"
+       {...props}
+       className={cn(
+         "h-10 px-2 text-left align-middle font-medium text-muted-foreground border-0 [&:has([role=checkbox])]:pr-0 [&>[role=checkbox]]:translate-y-[2px]",
+         className
+       )}
+     >
+       {children}
+     </th>
+   )
+ );
 TableHead.displayName = "TableHead";
 
-export const TableCell = forwardRef<HTMLTableCellElement, TableCellProps>(
-  ({ children, className, ...props }, ref) => (
-    <td
-      ref={ref}
-      data-slot="table-cell"
-      className={cn(
-        "py-3.5 p-2 align-middle whitespace-nowrap [&:has([role=checkbox])]:pr-0 [&>[role=checkbox]]:translate-y-[2px]",
-        className
-      )}
-      {...props}
-    >
-      {children}
-    </td>
-  )
-);
+const TableBody = React.forwardRef<
+  HTMLTableSectionElement,
+  React.HTMLAttributes<HTMLTableSectionElement>
+>(({ className, ...props }, ref) => (
+  <tbody
+    ref={ref}
+    {...props}
+    className={cn("[&_tr:last-child]:border-0", className)}
+  />
+));
+TableBody.displayName = "TableBody";
+
+ const TableCell = forwardRef<HTMLTableCellElement, TableCellProps>(
+   ({ children, className, ...props }, ref) => (
+     <td
+       ref={ref}
+       data-slot="table-cell"
+       {...props}
+       className={cn(
+         "py-3.5 align-middle whitespace-nowrap border-0 [&:has([role=checkbox])]:pr-0 [&>[role=checkbox]]:translate-y-[2px]",
+         className
+       )}
+     >
+       {children}
+     </td>
+   )
+ );
 TableCell.displayName = "TableCell";
 
 const Table = forwardRef<HTMLTableElement, TableProps>(
   ({ children, className, ...props }, ref) => (
     <div
       data-slot="table-container"
-      className="relative w-full overflow-x-auto"
+      className={(cn("table relative w-fit max-h-10 overflow-auto overflow-auto border-collapse table-fixed", className))}
     >
       <table
         ref={ref}
-        data-slot="table"
-        className={cn("w-full border-collapse", className)}
+                data-slot="table"
+        className={cn("w-full border-collapse table-fixed", className)}
         {...props}
       >
         {children}
@@ -162,7 +207,7 @@ const Table = forwardRef<HTMLTableElement, TableProps>(
 );
 Table.displayName = "Table";
 
-export function IndeterminateCheckbox({
+function IndeterminateCheckbox({
   indeterminate,
   className = "",
   ...rest
@@ -175,7 +220,7 @@ export function IndeterminateCheckbox({
     }
   }, [ref, indeterminate]);
 
-  return (
+  return (  
     <input
       type="checkbox"
       ref={ref}
@@ -185,14 +230,14 @@ export function IndeterminateCheckbox({
   );
 }
 
-export interface DataTableProps<TData> {
+interface DataTableProps<TData> {
   table: TanStackTable<TData>;
   columnOrder: string[];
   onColumnOrderChange: (columnOrder: string[]) => void;
   className?: string;
 }
 
-export function DataTable<TData>({
+function DataTable<TData>({
   table,
   columnOrder,
   onColumnOrderChange,
@@ -225,23 +270,23 @@ export function DataTable<TData>({
       sensors={sensors}
     >
       <Table className={className}>
-        <thead>
-          {table.getHeaderGroups().map((headerGroup) => (
-            <tr key={headerGroup.id}>
-              <SortableContext
-                items={columnOrder}
-                strategy={horizontalListSortingStrategy}
-              >
-                {headerGroup.headers.map((header) => (
-                  <DraggableTableHeader key={header.id} header={header} />
-                ))}
-              </SortableContext>
-            </tr>
-          ))}
-        </thead>
-        <tbody>
+        <TableHeader>
+                  {table.getHeaderGroups().map((headerGroup) => {
+                     return <TableRow key={headerGroup.id}>
+                          <SortableContext
+                              items={columnOrder}
+                              strategy={horizontalListSortingStrategy}
+                          >
+                              {headerGroup.headers.map((header) => (
+                                  <DraggableTableHeader key={header.id} header={header} />
+                              ))}
+                          </SortableContext>
+                      </TableRow>
+                  })}
+        </TableHeader>
+        <TableBody>
           {table.getRowModel().rows.map((row) => (
-            <tr key={row.id}>
+            <TableRow key={row.id}>
               <SortableContext
                 items={columnOrder}
                 strategy={horizontalListSortingStrategy}
@@ -250,12 +295,24 @@ export function DataTable<TData>({
                   <DragAlongCell key={cell.id} cell={cell} />
                 ))}
               </SortableContext>
-            </tr>
+            </TableRow>
           ))}
-        </tbody>
+        </TableBody>
       </Table>
     </DndContext>
   );
 }
 
-export { Table, DraggableTableHeader, DragAlongCell };
+export {
+  Table,
+  TableRow,
+  DataTable,
+    TableHead,
+  TableBody,
+  TableCell,
+  TableHeader,
+  DraggableTableHeader,
+  DragAlongCell,
+  IndeterminateCheckbox,
+  type DataTableProps,
+};

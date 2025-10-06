@@ -14,4 +14,13 @@ export default defineConfig({
     }),
     react(),
   ],
+  css: {
+    postcss: './postcss.config.js',
+  },
+  server: {
+    watch: {
+      usePolling: true,
+      interval: 1000,
+    },
+  },
 })

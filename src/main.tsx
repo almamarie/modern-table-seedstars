@@ -19,8 +19,10 @@ import RefactorTable from "./pages/RefactorTable";
 function App() {
   return (
     <Router>
-      <div className="bg-gray-50 min-h-screen">
-        <Navigation />
+      <div className="bg-gray-50">
+        <div>
+          <Navigation />
+        </div>
         <div className="mx-auto px-4 container">
           <Routes>
             <Route

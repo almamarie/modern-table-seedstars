@@ -7,6 +7,7 @@ import {
   SelectTrigger,
   SelectValue,
 } from "../../ui/select";
+import { Pagination } from "./Pagination";
 
 export function TableFooter<TData>({ table }: { table: Table<TData> }) {
   return (
@@ -21,6 +22,14 @@ export function TableFooter<TData>({ table }: { table: Table<TData> }) {
           <Select
             value={`${table.getState().pagination.pageSize}`}
             onValueChange={(value: any) => {
+              if (value === "All") {
+                console.log(
+                  "Roes changed: ",
+                  table.getFilteredRowModel().rows.length
+                );
+                table.setPageSize(table.getFilteredRowModel().rows.length);
+                return;
+              }
               table.setPageSize(Number(value));
             }}
           >
@@ -28,7 +37,7 @@ export function TableFooter<TData>({ table }: { table: Table<TData> }) {
               <SelectValue placeholder={table.getState().pagination.pageSize} />
             </SelectTrigger>
             <SelectContent side="top">
-              {[10, 20, 30, 40, 50].map((pageSize) => (
+              {[20, 30, 40, 50, "All"].map((pageSize) => (
                 <SelectItem key={pageSize} value={`${pageSize}`}>
                   {pageSize}
                 </SelectItem>
@@ -40,6 +49,7 @@ export function TableFooter<TData>({ table }: { table: Table<TData> }) {
           Page {table.getState().pagination.pageIndex + 1} of{" "}
           {table.getPageCount()}
         </div>
+        <Pagination table={table} />
       </div>
     </div>
   );

@@ -58,7 +58,7 @@ export function makeData(...lens: number[]) {
   return makeDataLevel();
 }
 
-const data = makeData(1000);
+const data = makeData(15);
 
 export const fetchData = async (
   start: number,

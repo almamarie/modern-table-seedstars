@@ -4,7 +4,7 @@ import * as React from "react";
 import * as CheckboxPrimitive from "@radix-ui/react-checkbox";
 import { Check, Minus } from "lucide-react";
 
-import { cn } from "@/lib/utils";
+import { cn } from "../../lib/utils";
 
 const Checkbox = React.forwardRef<
   React.ElementRef<typeof CheckboxPrimitive.Root>,
@@ -13,18 +13,18 @@ const Checkbox = React.forwardRef<
   <CheckboxPrimitive.Root
     ref={ref}
     className={cn(
-      "peer h-[16px] w-[16px] shrink-0 rounded-sm border border-primary shadow focus-visible:outline-none focus-visible:ring-1 focus-visible:ring-ring disabled:cursor-not-allowed disabled:opacity-50 data-[state=checked]:bg-primary data-[state=checked]:text-primary-foreground data-[state=indeterminate]:bg-primary data-[state=indeterminate]:border-primary data-[state=inderminate]:text-primary-foreground",
+      "peer data-[state=checked]:bg-primary data-[state=indeterminate]:bg-primary disabled:opacity-50 shadow border border-primary data-[state=indeterminate]:border-primary rounded-sm focus-visible:outline-none focus-visible:ring-1 focus-visible:ring-ring w-[16px] h-[16px] data-[state=checked]:text-primary-foreground data-[state=inderminate]:text-primary-foreground disabled:cursor-not-allowed shrink-0",
       className
     )}
     {...props}
   >
     <CheckboxPrimitive.Indicator
-      className={cn("flex items-center justify-center text-current")}
+      className={cn("flex justify-center items-center text-current")}
     >
       {props.checked === "indeterminate" ? (
-        <Minus className="h-[16px] w-[16px] text-primary-foreground" />
+        <Minus className="w-[16px] h-[16px] text-primary-foreground" />
       ) : (
-        <Check className="h-[16px] w-[16px]" />
+        <Check className="w-[16px] h-[16px]" />
       )}
     </CheckboxPrimitive.Indicator>
   </CheckboxPrimitive.Root>
