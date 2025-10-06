@@ -2,7 +2,7 @@ import { useMemo, useState } from "react";
 import { ColumnDef, SortingState } from "@tanstack/react-table";
 import { fetchData, Person, PersonApiResponse } from "../makeData";
 import { keepPreviousData, useInfiniteQuery } from "@tanstack/react-query";
-import { DataTable, IndeterminateCheckbox } from "../components/ui/table";
+import { DataTable, IndeterminateCheckbox } from "../components/ui/Table";
 import { Actions } from "../components/Actions";
 import UserAvatar from "../components/userAvatar";
 import { usePersistedColumnOrder } from "../hooks/useColumnOrder";

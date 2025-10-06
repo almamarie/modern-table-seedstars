@@ -3,7 +3,7 @@ import { ColumnDef, SortingState } from "@tanstack/react-table";
 import { fetchData, Person, PersonApiResponse } from "../makeData";
 import { keepPreviousData, useInfiniteQuery } from "@tanstack/react-query";
 import { VirtualizedTable } from "../components/ui/virtualisedTable";
-import { IndeterminateCheckbox } from "../components/ui/table";
+import { IndeterminateCheckbox } from "../components/ui/Table";
 import { Actions } from "../components/Actions";
 import UserAvatar from "../components/userAvatar";
 import { usePersistedColumnOrder } from "../hooks/useColumnOrder";
