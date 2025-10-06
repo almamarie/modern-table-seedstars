@@ -9,16 +9,6 @@ export default function Navigation() {
         <h1 className="mb-4 font-bold text-xl">Table Examples</h1>
         <div className="flex gap-4">
           <Link
-            to="/virtualized-modern-table"
-            className={`px-4 py-2 rounded transition-colors ${
-              location.pathname === "/virtualized-modern-table"
-                ? "bg-blue-600 text-white"
-                : "bg-gray-600 hover:bg-gray-700 text-gray-200"
-            }`}
-          >
-            Virtualized Modern Table
-          </Link>
-          <Link
             to="/modern-table"
             className={`px-4 py-2 rounded transition-colors ${
               location.pathname === "/modern-table"
@@ -27,6 +17,16 @@ export default function Navigation() {
             }`}
           >
             Modern Table
+          </Link>
+          <Link
+            to="/virtualized-modern-table"
+            className={`px-4 py-2 rounded transition-colors ${
+              location.pathname === "/virtualized-modern-table"
+                ? "bg-blue-600 text-white"
+                : "bg-gray-600 hover:bg-gray-700 text-gray-200"
+            }`}
+          >
+            Virtualized Modern Table
           </Link>
         </div>
       </div>
