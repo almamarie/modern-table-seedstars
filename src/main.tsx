@@ -25,10 +25,7 @@ function App() {
         </div>
         <div className="mx-auto px-4">
           <Routes>
-            <Route
-              path="/"
-              element={<Navigate to="/virtualized-modern-table" replace />}
-            />
+            <Route path="/" element={<Navigate to="/modern-table" replace />} />
             <Route
               path="/virtualized-modern-table"
               element={<VirtualizedModernTable />}

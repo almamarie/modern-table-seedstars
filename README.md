@@ -2,6 +2,18 @@
 
 A responsive, feature-rich table application built with React, TypeScript, and TanStack Table. This project demonstrates advanced table functionality including sorting, column reordering, row selection, bulk actions, and responsive design.
 
+## 🎥 Demo Video
+
+👉 [Watch the 2-minute demo here](https://drive.google.com/file/d/1lFv_THiMUHRcQD2x7TSvnJtTNEKxzhRe/view?usp=sharing)
+
+*(Shows table reordering, sorting, selection, and bulk actions with explanations.)*
+
+## 🔗 Live Demo
+
+Try the live demo here: **[Modern Table — Live Demo](https://modern-table-seedstars-8w9w.vercel.app/)**
+
+[![View demo](https://img.shields.io/badge/Live%20Demo-Visit%20Site-blue?style=flat&logo=react)](https://your-live-url.com)
+
 ## 🚀 Quick Start
 
 ### Prerequisites
@@ -14,7 +26,7 @@ A responsive, feature-rich table application built with React, TypeScript, and T
 ```bash
 # Clone the repository
 git clone git@github.com:almamarie/modern-table-seedstars.git
-cd mordern-table
+cd mordern-table-seedstars
 
 # Install dependencies
 npm install
