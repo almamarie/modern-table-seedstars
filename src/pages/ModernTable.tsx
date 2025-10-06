@@ -96,7 +96,7 @@ export default function ModernTable() {
           return (
             <a
               href={`mailto:${email}`}
-              className="text-indigo-500 hover:underline"
+              className="text-indigo-500 hover:underline truncate"
             >
               {email}
             </a>
@@ -116,12 +116,12 @@ export default function ModernTable() {
       {
         accessorKey: "createdAt",
         header: ({ column }) => (
-          <SortableHeader column={column} title="Application Date" />
+          <SortableHeader column={column} title="Timestamp" />
         ),
         cell: ({ row }) => (
           <div className="flex items-center gap-1">
             <NotepadText className="w-5 h-5 text-indigo-500 text-primary" />
-            <span>{row.getValue("createdAt")}</span>
+            <span className="truncate">{row.getValue("createdAt")}</span>
           </div>
         ),
         enableSorting: true,
