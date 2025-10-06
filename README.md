@@ -13,7 +13,7 @@ A responsive, feature-rich table application built with React, TypeScript, and T
 
 ```bash
 # Clone the repository
-git clone <repository-url>
+git clone git@github.com:almamarie/modern-table-seedstars.git
 cd mordern-table
 
 # Install dependencies
