@@ -63,26 +63,19 @@ const DraggableTableHeader = <T,>({ header }: { header: Header<T, unknown> }) =>
           width: "100%",
         }}
       >
-        <div
-          {...attributes}
-          {...listeners}
-          {...{
-            className: header.column.getCanSort()
-              ? "cursor-grab select-none"
-              : "",
-            onClick: header.column.getToggleSortingHandler(),
-          }}
-          style={{ flex: 1, display: "flex", alignItems: "center" }}
-        >
+        <div style={{ flex: 1, display: "flex", alignItems: "center" }}>
           {header.isPlaceholder
             ? null
             : flexRender(header.column.columnDef.header, header.getContext())}
-          {{
-            asc: " 🔼",
-            desc: " 🔽",
-          }[header.column.getIsSorted() as string] ?? null}
         </div>
-        {/* <button className="ml-2 cursor-grab">🟰</button> */}
+        <div
+          {...attributes}
+          {...listeners}
+          className="ml-2 cursor-grab p-1 hover:bg-gray-100 rounded"
+          title="Drag to reorder column"
+        >
+          🟰
+        </div>
       </div>
     </TableHead>
   );
@@ -279,14 +272,17 @@ function DataTable<TData>({
     getSortedRowModel: getSortedRowModel(),
     getFilteredRowModel: getFilteredRowModel(),
     getPaginationRowModel: getPaginationRowModel(),
-    manualSorting: true,
+    manualSorting: false,
     debugTable: true,
     debugHeaders: true,
     debugColumns: true,
   });
 
   const handleSortingChange: OnChangeFn<SortingState> = (updater) => {
-    setSorting(updater);
+    console.log("Sorting change called with:", updater);
+    const newSorting = typeof updater === 'function' ? updater(sorting) : updater;
+    console.log("New sorting state:", newSorting);
+    setSorting(newSorting);
     table.setPageIndex(0);
   };
 

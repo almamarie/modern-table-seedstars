@@ -27,37 +27,24 @@ export function SortableHeader<TData, TValue>({
 
   return (
     <div className={cn("flex items-center space-x-2 h-full", className)}>
-      <DropdownMenu>
-        <DropdownMenuTrigger asChild>
-          <Button
-            variant="ghost"
-            size="sm"
-            className={cn(
-              "data-[state=open]:bg-primary/10 -ml-3 h-full text-xs uppercase",
-              column.getIsSorted() && "bg-primary/10"
-            )}
-          >
-            <span>{title}</span>
-            {column.getIsSorted() === "desc" && <ArrowDown />}
-            {column.getIsSorted() === "asc" && <ArrowUp />}
-            {!column.getIsSorted() && <ChevronsUpDown className="w-1 h-1" />}
-          </Button>
-        </DropdownMenuTrigger>
-        <DropdownMenuContent align="start">
-          <DropdownMenuItem onClick={() => column.toggleSorting(false)}>
-            <ArrowUp className="w-3.5 h-3.5 text-muted-foreground/70" />
-            Asc
-          </DropdownMenuItem>
-          <DropdownMenuItem onClick={() => column.toggleSorting(true)}>
-            <ArrowDown className="w-3.5 h-3.5 text-muted-foreground/70" />
-            Desc
-          </DropdownMenuItem>
-          <DropdownMenuItem onClick={() => column.clearSorting()}>
-            <X className="w-3.5 h-3.5 text-muted-foreground/70" />
-            Remove
-          </DropdownMenuItem>
-        </DropdownMenuContent>
-      </DropdownMenu>
+      <Button
+        variant="ghost"
+        size="sm"
+        onClick={() => {
+          console.log("Sorting clicked for:", title);
+          console.log("Current sort state:", column.getIsSorted());
+          column.toggleSorting(column.getIsSorted() === "asc");
+        }}
+        className={cn(
+          "data-[state=open]:bg-primary/10 -ml-3 h-full text-xs uppercase",
+          column.getIsSorted() && "bg-primary/10"
+        )}
+      >
+        <span>{title}</span>
+        {column.getIsSorted() === "desc" && <ArrowDown className="w-4 h-4" />}
+        {column.getIsSorted() === "asc" && <ArrowUp className="w-4 h-4" />}
+        {!column.getIsSorted() && <ChevronsUpDown className="w-4 h-4" />}
+      </Button>
     </div>
   );
 }

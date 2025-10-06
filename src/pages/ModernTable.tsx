@@ -65,7 +65,7 @@ export default function ModernTable() {
       },
       {
         accessorKey: "#",
-        cell: (info) => info.row.index,
+        cell: (info) => info.row.index + 1,
         id: "index",
         size: 30,
         disableDrag: true,
@@ -106,7 +106,9 @@ export default function ModernTable() {
       },
       {
         accessorKey: "status",
-        header: () => "status",
+        header: ({ column }) => (
+          <SortableHeader column={column} title="Status" />
+        ),
         cell: (info) => (
           <ApplicationStatus status={info.getValue() as STATUS} />
         ),
