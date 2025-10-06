@@ -38,7 +38,7 @@ import {
   TableHead,
   TableHeader,
   TableRow,
-} from "./table";
+} from "./Table";
 import { TableFooter } from "../data-table/Footer";
 
 const VirtualizedDraggableTableHeader = ({
