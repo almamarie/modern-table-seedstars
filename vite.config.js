@@ -9,13 +9,13 @@ export default defineConfig({
       preventAssignment: true,
       values: {
         __DEV__: JSON.stringify(true),
-        'process.env.NODE_ENV': JSON.stringify('development'),
+        "process.env.NODE_ENV": JSON.stringify("development"),
       },
     }),
     react(),
   ],
   css: {
-    postcss: './postcss.config.js',
+    postcss: "./postcss.config.js",
   },
   server: {
     watch: {
@@ -23,4 +23,9 @@ export default defineConfig({
       interval: 1000,
     },
   },
-})
+  test: {
+    globals: true,
+    environment: "jsdom",
+    setupFiles: "./src/setupTests.ts",
+  },
+});
