@@ -41,7 +41,7 @@ npm run build
 npm run preview
 
 # tests
-npx vite test
+npx vitest
 ```
 
 The application will be available at `http://localhost:5173` (or next available port).
